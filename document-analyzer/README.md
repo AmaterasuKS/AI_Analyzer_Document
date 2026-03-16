@@ -2,6 +2,15 @@
 ![FastAPI](https://img.shields.io/badge/FastAPI-green)
 ![Groq](https://img.shields.io/badge/Groq-AI-orange)
 
+## How it works
+
+The user uploads a PDF, DOCX, or TXT file through the web interface.
+The backend extracts the raw text using PyMuPDF or python-docx depending
+on the file type. The extracted text is then sent to the Groq API with
+a structured prompt, which returns a concise summary and a list of key
+points. Users can also ask specific questions about the document content,
+and the AI will answer based strictly on the uploaded text.
+
 # AI Document Analyzer
 
 A web-based document analysis tool (PDF/DOCX/TXT): automatically generates a summary, highlights key points, and answers questions about the content.
