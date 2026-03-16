@@ -1,35 +1,49 @@
+![Python](https://img.shields.io/badge/Python-3.10+-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-green)
+![Groq](https://img.shields.io/badge/Groq-AI-orange)
+
+## How it works
+
+The user uploads a PDF, DOCX, or TXT file through the web interface.
+The backend extracts the raw text using PyMuPDF or python-docx depending
+on the file type. The extracted text is then sent to the Groq API with
+a structured prompt, which returns a concise summary and a list of key
+points. Users can also ask specific questions about the document content,
+and the AI will answer based strictly on the uploaded text.
+
 # AI Document Analyzer
 
-Веб-приложение для анализа документов (PDF/DOCX/TXT): автоматически делает краткое резюме, выделяет ключевые тезисы и отвечает на вопросы по содержанию.
+A web-based document analysis tool (PDF/DOCX/TXT): automatically generates a summary, highlights key points, and answers questions about the content.
 
-## Стек
+## Stack:
 
 - **Python 3.10+**
-- **FastAPI** (backend API)
-- **Groq API** (модель: `llama-3.3-70b-versatile`)
-- **PyMuPDF** (извлечение текста из PDF)
-- **python-docx** (извлечение текста из DOCX)
-- **HTML + Tailwind CSS** (frontend, один файл `static/index.html`)
+- **FastAPI** (API backend)
+- **Grok API** (model: `llama-3.3-70b-versatile`)
+- **PyMuPDF** (text extraction from PDF)
+- **python-docx** (text extraction from DOCX)
+- **HTML + Tailwind CSS** (frontend, single file `static/index.html`)
 
-## Возможности
+## Opportunities:
 
-- Загрузка файлов **PDF / DOCX / TXT**
-- AI-анализ: **summary** + **key points**
-- Q&A: ответ на вопрос по тексту (через endpoint `/question`)
+- Upload **PDF / DOCX / TXT** files
+- AI analysis: **summary** + **key points**
+- Q&A: answer a question based on the text (via the `/question`)
 
-## Скриншот
+## Screenshot:
 
-_TODO: добавить скриншот интерфейса сюда (placeholder)._
+<img width="1280" height="907" alt="image" src="https://github.com/user-attachments/assets/fae27a53-fa17-4473-9b74-41a3cb7a934a" />
 
-## Установка
 
-1) Перейдите в папку проекта:
+## Installing:
+
+1) Go to the project folder:
 
 ```bash
 cd document-analyzer
 ```
 
-2) Создайте и активируйте виртуальное окружение:
+2) Create and activate a virtual environment:
 
 Windows (PowerShell):
 
@@ -38,48 +52,48 @@ python -m venv venv
 .\venv\Scripts\Activate.ps1
 ```
 
-3) Установите зависимости:
+3) Install the dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Настройка переменных окружения
+## Setting Environment Variables
 
-1) Создайте файл `.env` рядом с `main.py`.
-2) Добавьте ключ Groq:
+1) Create a file `.env` next to `main.py`.
+2) Add your Grok API-Key:
 
 ```env
 GROQ_API_KEY=your_key_here
 ```
 
-Формат можно посмотреть в `.env.example`.
+You can view the format at `.env.example`.
 
-## Запуск
+## Launch
 
-Из папки `document-analyzer`:
+From folder `document-analyzer`:
 
 ```bash
 python main.py
 ```
 
-После запуска откройте в браузере:
+After launching the application, open the following in your browser:
 
 - `http://127.0.0.1:8000/`
 
 ## API
 
-- **POST** `/upload` — принимает файл (PDF/DOCX/TXT), возвращает:
+- **POST** `/upload` — getting file (PDF/DOCX/TXT), send it back:
   - `filename`
   - `summary`
   - `key_points`
   - `word_count`
-- **POST** `/question` — принимает JSON:
+- **POST** `/question` — gets JSON:
   - `question`
   - `document_text`
-  и возвращает `answer`
+  sending back `answer`
 
-## Примечания
+## Notes
 
-- Для **сканированных PDF** без слоя текста нужен **OCR**, иначе извлечение текста может вернуть пустую строку.
+- For **scanned PDFs** without a text layer, you need **OCR**; otherwise, text extraction may return an empty string.
 
