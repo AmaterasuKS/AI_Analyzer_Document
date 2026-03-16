@@ -1,9 +1,9 @@
+import json
 import os
 from typing import List, Tuple
 
 from dotenv import load_dotenv
 from groq import Groq
-
 
 load_dotenv()
 
@@ -59,11 +59,19 @@ def analyze_document(text: str) -> Tuple[str, List[str]]:
 
     content = response.choices[0].message.content or ""
 
-    # Попробуем распарсить JSON-ответ, но при ошибке вернём всё как один summary.
-    import json
+    # Убираем markdown-обёртку ```json ... ``` или ``` ... ```, если есть
+    text = content.strip()
+    if text.startswith("```"):
+        lines = text.split("\n")
+        if lines[0].startswith("```"):
+            lines = lines[1:]
+        if lines and lines[-1].strip() == "```":
+            lines = lines[:-1]
+        text = "\n".join(lines)
 
+    # Попробуем распарсить JSON-ответ, но при ошибке вернём всё как один summary.
     try:
-        data = json.loads(content)
+        data = json.loads(text)
         summary = str(data.get("summary", "")).strip()
         raw_points = data.get("key_points", [])
         key_points = [str(p).strip() for p in raw_points if str(p).strip()]
