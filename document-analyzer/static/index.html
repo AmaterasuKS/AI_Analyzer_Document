@@ -10,18 +10,21 @@
         theme: {
           extend: {
             colors: {
-              bg: "#0b1220",
-              panel: "#0f1b2d",
-              panel2: "#0c1626",
-              border: "rgba(255,255,255,.10)",
-              text: "rgba(255,255,255,.92)",
-              muted: "rgba(255,255,255,.70)",
-              soft: "rgba(255,255,255,.08)",
-              accent: "#60a5fa",
-              accent2: "#a78bfa",
-              ok: "#34d399",
-              warn: "#fbbf24",
-              err: "#fb7185",
+              bg: "#0f0f0f",
+              surface: "#18181b",
+              panel: "#1c1c1f",
+              panel2: "#252528",
+              border: "rgba(255,255,255,.08)",
+              text: "#fafafa",
+              muted: "#a1a1aa",
+              soft: "rgba(255,255,255,.06)",
+              accent: "#f59e0b",
+              accent2: "#d97706",
+              accentMuted: "rgba(245,158,11,.15)",
+              ok: "#22c55e",
+              warn: "#eab308",
+              err: "#ef4444",
+              errMuted: "rgba(239,68,68,.12)",
             },
           },
         },
@@ -54,10 +57,27 @@
         animation: spin 1s linear infinite;
       }
       @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
+        to { transform: rotate(360deg); }
       }
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @keyframes slideUp {
+        from { opacity: 0; transform: translateY(12px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes cardIn {
+        from { opacity: 0; transform: translateY(8px) scale(0.98); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
+      .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+      .animate-slide-up { animation: slideUp 0.45s ease-out forwards; }
+      .animate-card-in { animation: cardIn 0.35s ease-out forwards; }
+      .delay-1 { animation-delay: 0.05s; }
+      .delay-2 { animation-delay: 0.1s; }
+      .delay-3 { animation-delay: 0.15s; }
+      .delay-4 { animation-delay: 0.2s; }
       .lang-btn.active {
         background: rgba(255, 255, 255, 0.12);
         color: rgba(255, 255, 255, 0.95);
@@ -68,240 +88,146 @@
       .lang-btn:not(.active):hover {
         color: rgba(255, 255, 255, 0.8);
       }
+      .card {
+        transition: box-shadow 0.25s ease, border-color 0.2s ease, transform 0.2s ease;
+      }
+      .card:hover {
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+      }
+      .card-accent {
+        border-left: 4px solid #f59e0b;
+      }
+      .input-focus:focus {
+        border-color: rgba(245, 158, 11, 0.5);
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+      }
+      .drop-zone-active {
+        border-color: rgba(245, 158, 11, 0.5);
+        background: rgba(245, 158, 11, 0.08);
+      }
+      .typing-cursor {
+        animation: blink 0.8s step-end infinite;
+        color: var(--tw-color-accent, #f59e0b);
+      }
+      .typing-cursor.hidden {
+        display: none;
+      }
+      @keyframes blink {
+        50% { opacity: 0; }
+      }
     </style>
   </head>
-  <body class="h-full bg-bg text-text">
+  <body class="h-full bg-bg text-text antialiased">
     <div class="relative min-h-full">
-      <div
-        class="absolute inset-0 -z-10 bg-gradient-to-br from-panel2 via-bg to-bg"
-      ></div>
+      <div class="absolute inset-0 -z-10 bg-gradient-to-b from-surface via-bg to-bg"></div>
       <div class="noise absolute inset-0 -z-10"></div>
 
-      <header class="mx-auto max-w-6xl px-4 pt-10 pb-6">
-        <div class="flex flex-col gap-3">
-          <div
-            class="inline-flex items-center gap-2 text-sm text-muted"
-            aria-label="Stack"
-          >
-            <span
-              class="rounded-full border border-border bg-soft px-2.5 py-1"
-              >FastAPI</span
-            >
-            <span
-              class="rounded-full border border-border bg-soft px-2.5 py-1"
-              >Groq (llama-3.3-70b)</span
-            >
-            <span
-              class="rounded-full border border-border bg-soft px-2.5 py-1"
-              >PDF/DOCX/TXT</span
-            >
-          </div>
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <h1 class="text-3xl font-semibold tracking-tight">
-                AI Document Analyzer
-              </h1>
-              <p class="mt-1 text-muted" data-i18n="subtitle">
-                Загрузи документ — получи краткое резюме, ключевые тезисы и
-                задай вопрос по содержанию.
-              </p>
+      <!-- Header: компактный, палитра -->
+      <header class="border-b border-border/50 bg-bg/80 backdrop-blur-sm sticky top-0 z-10 animate-fade-in">
+        <div class="mx-auto max-w-5xl px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <h1 class="text-xl font-bold tracking-tight text-text">
+              AI Document Analyzer
+            </h1>
+            <div class="hidden sm:flex items-center gap-1.5 text-xs text-muted">
+              <span class="rounded-md bg-soft px-2 py-0.5">PDF</span>
+              <span class="rounded-md bg-soft px-2 py-0.5">DOCX</span>
+              <span class="rounded-md bg-soft px-2 py-0.5">PPTX</span>
+              <span class="rounded-md bg-soft px-2 py-0.5">TXT</span>
             </div>
-            <div class="flex flex-wrap items-center gap-3">
-              <div
-                class="flex rounded-xl border border-border bg-soft p-0.5 text-sm"
-                role="group"
-                aria-label="Language"
-              >
-                <button
-                  type="button"
-                  id="langRu"
-                  class="lang-btn rounded-lg px-3 py-1.5 font-medium transition"
-                  data-lang="ru"
-                  aria-pressed="true"
-                >
-                  RU
-                </button>
-                <button
-                  type="button"
-                  id="langEn"
-                  class="lang-btn rounded-lg px-3 py-1.5 font-medium transition"
-                  data-lang="en"
-                  aria-pressed="false"
-                >
-                  EN
-                </button>
-              </div>
-              <div class="hidden sm:block">
-                <div
-                  class="rounded-2xl border border-border bg-panel px-4 py-3 text-sm"
-                >
-                  <div class="text-muted">Backend</div>
-                  <div class="mt-1 font-mono">POST /upload · POST /question</div>
-                </div>
-              </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="flex rounded-lg border border-border bg-panel p-0.5 text-sm" role="group" aria-label="Language">
+              <button type="button" id="langRu" class="lang-btn rounded-md px-3 py-1.5 font-medium transition" data-lang="ru" aria-pressed="true">RU</button>
+              <button type="button" id="langEn" class="lang-btn rounded-md px-3 py-1.5 font-medium transition" data-lang="en" aria-pressed="false">EN</button>
             </div>
           </div>
         </div>
       </header>
 
-      <main class="mx-auto max-w-6xl px-4 pb-16">
-        <div class="grid gap-6 lg:grid-cols-2">
-          <section
-            class="rounded-2xl border border-border bg-panel p-5 shadow-sm"
-          >
-            <div class="flex items-start justify-between gap-3">
-              <div>
-                <h2 class="text-lg font-semibold" data-i18n="uploadTitle">Загрузка документа</h2>
-                <p class="mt-1 text-sm text-muted" data-i18n="uploadFormats">
-                  Поддерживаемые форматы: PDF, DOCX, TXT.
-                </p>
-              </div>
-              <div
-                id="uploadStatus"
-                class="hidden rounded-full border border-border bg-soft px-3 py-1 text-xs text-muted"
-              ></div>
-            </div>
+      <main class="mx-auto max-w-5xl px-4 sm:px-6 py-8 pb-24">
+        <p class="text-muted text-sm mb-8 max-w-2xl animate-fade-in" data-i18n="subtitle">
+          Загрузи документ — получи краткое резюме, ключевые тезисы и задай вопрос по содержанию.
+        </p>
 
-            <div
-              id="dropZone"
-              class="mt-4 group relative flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-panel2 p-8 text-center transition hover:border-white/20 hover:bg-white/[0.03]"
-              role="button"
-              tabindex="0"
-              aria-label="Drag and drop upload zone"
-            >
-              <input
-                id="fileInput"
-                type="file"
-                class="hidden"
-                accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
-              />
-
-              <div
-                class="flex h-12 w-12 items-center justify-center rounded-2xl border border-border bg-soft"
-                aria-hidden="true"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  class="h-6 w-6 text-white/80"
-                >
-                  <path
-                    d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-.321a5.625 5.625 0 1 0-10.99 1.668A4.501 4.501 0 0 0 5.25 18.75h8.25a3.75 3.75 0 0 0 3.75-3.75Z"
-                  />
-                  <path
-                    d="M12 12.75a.75.75 0 0 1 .75.75v3.69l.72-.72a.75.75 0 1 1 1.06 1.06l-2 2a.75.75 0 0 1-1.06 0l-2-2a.75.75 0 1 1 1.06-1.06l.72.72V13.5a.75.75 0 0 1 .75-.75Z"
-                  />
-                </svg>
-              </div>
-
-              <div class="mt-3">
-                <div class="text-base font-medium" data-i18n="dropHint">
-                  Перетащи файл сюда или нажми для выбора
-                </div>
-                <div class="mt-1 text-sm text-muted" data-i18n="dropTip">
-                  Лучше всего работает с текстовыми PDF (не сканы).
-                </div>
-              </div>
-
-              <div class="mt-5 flex flex-wrap items-center justify-center gap-2">
-                <span
-                  class="rounded-full border border-border bg-soft px-2.5 py-1 text-xs text-muted"
-                  >PDF</span
-                >
-                <span
-                  class="rounded-full border border-border bg-soft px-2.5 py-1 text-xs text-muted"
-                  >DOCX</span
-                >
-                <span
-                  class="rounded-full border border-border bg-soft px-2.5 py-1 text-xs text-muted"
-                  >TXT</span
-                >
-              </div>
-            </div>
-
-            <div class="mt-4 flex items-center justify-between gap-3">
-              <div class="min-w-0">
-                <div class="text-sm text-muted" data-i18n="selectedFile">Выбранный файл</div>
-                <div
-                  id="fileName"
-                  class="truncate font-mono text-sm text-white/90"
-                >
-                  —
-                </div>
-              </div>
-              <button
-                id="analyzeBtn"
-                class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-accent to-accent2 px-4 py-2 text-sm font-semibold text-black shadow-sm transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
-                disabled
-              >
-                <span id="analyzeBtnSpinner" class="hidden spinner"></span>
-                <span id="analyzeBtnText" data-i18n="analyzeBtn">Анализировать</span>
-              </button>
-            </div>
-
-            <div
-              id="uploadError"
-              class="mt-4 hidden rounded-xl border border-white/10 bg-white/[0.03] p-3 text-sm text-err"
-              role="alert"
-            ></div>
-          </section>
-
-          <section
-            class="rounded-2xl border border-border bg-panel p-5 shadow-sm"
-          >
-            <div class="flex items-start justify-between gap-3">
-              <div>
-                <h2 class="text-lg font-semibold" data-i18n="resultTitle">Результат анализа</h2>
-                <p class="mt-1 text-sm text-muted" data-i18n="resultHint">
-                  Резюме и ключевые тезисы появятся после загрузки.
-                </p>
-              </div>
-              <div
-                id="metaBadge"
-                class="hidden rounded-full border border-border bg-soft px-3 py-1 text-xs text-muted"
-              ></div>
-            </div>
-
-            <div class="mt-4 space-y-5">
-              <div class="rounded-2xl border border-border bg-panel2 p-4">
-                <div class="text-sm font-semibold" data-i18n="summaryLabel">Summary</div>
-                <p id="summary" class="mt-2 whitespace-pre-wrap text-sm text-muted">
-                  —
-                </p>
-              </div>
-
-              <div class="rounded-2xl border border-border bg-panel2 p-4">
-                <div class="text-sm font-semibold" data-i18n="keyPointsLabel">Key points</div>
-                <ul
-                  id="keyPoints"
-                  class="mt-3 list-disc space-y-2 pl-5 text-sm text-muted"
-                >
-                  <li>—</li>
-                </ul>
-              </div>
-            </div>
-          </section>
-        </div>
-
-        <section
-          class="mt-6 rounded-2xl border border-border bg-panel p-5 shadow-sm"
-        >
-          <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <!-- Секция 1: Загрузка — широкая карточка, крупная зона -->
+        <section class="card card-accent rounded-2xl border border-border bg-panel p-6 sm:p-8 mb-8 animate-slide-up opacity-0 delay-1">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
             <div>
-              <h2 class="text-lg font-semibold" data-i18n="questionTitle">Вопрос по документу</h2>
-              <p class="mt-1 text-sm text-muted" data-i18n="questionHint">
-                Задай вопрос — AI ответит, опираясь на результат анализа.
-              </p>
+              <h2 class="text-lg font-semibold text-text" data-i18n="uploadTitle">Загрузка документа</h2>
+              <p class="mt-0.5 text-sm text-muted" data-i18n="uploadFormats">Поддерживаемые форматы: PDF, DOCX, PPTX, TXT.</p>
+            </div>
+            <div id="uploadStatus" class="hidden rounded-full border border-border bg-soft px-3 py-1.5 text-xs text-muted"></div>
+          </div>
+
+          <div
+            id="dropZone"
+            class="group relative flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-border bg-panel2 min-h-[220px] sm:min-h-[260px] p-8 sm:p-12 text-center transition-all duration-200 hover:border-accent/40 hover:bg-accentMuted"
+            role="button"
+            tabindex="0"
+            aria-label="Drag and drop upload zone"
+          >
+            <input id="fileInput" type="file" class="hidden" accept=".pdf,.docx,.pptx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.presentationml.presentation,text/plain" />
+            <div class="flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-border bg-soft transition group-hover:border-accent/50 group-hover:bg-accentMuted" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-8 w-8 text-muted group-hover:text-accent transition">
+                <path d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-.321a5.625 5.625 0 1 0-10.99 1.668A4.501 4.501 0 0 0 5.25 18.75h8.25a3.75 3.75 0 0 0 3.75-3.75Z" />
+                <path d="M12 12.75a.75.75 0 0 1 .75.75v3.69l.72-.72a.75.75 0 1 1 1.06 1.06l-2 2a.75.75 0 0 1-1.06 0l-2-2a.75.75 0 1 1 1.06-1.06l.72.72V13.5a.75.75 0 0 1 .75-.75Z" />
+              </svg>
+            </div>
+            <p class="mt-4 text-base font-medium text-text" data-i18n="dropHint">Перетащи файл сюда или нажми для выбора</p>
+            <p class="mt-1 text-sm text-muted" data-i18n="dropTip">Лучше всего работает с текстовыми PDF (не сканы).</p>
+          </div>
+
+          <div class="mt-5 flex flex-wrap items-center justify-between gap-4 rounded-xl bg-panel2 border border-border p-4 sm:p-5">
+            <div class="min-w-0 flex-1">
+              <div class="text-xs font-medium uppercase tracking-wider text-muted" data-i18n="selectedFile">Выбранный файл</div>
+              <div id="fileName" class="truncate font-mono text-sm text-text mt-0.5">—</div>
+            </div>
+            <button
+              id="analyzeBtn"
+              class="shrink-0 inline-flex items-center gap-2 rounded-xl bg-accent text-bg px-5 py-2.5 text-sm font-semibold shadow-lg transition hover:bg-accent2 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled
+            >
+              <span id="analyzeBtnSpinner" class="hidden spinner"></span>
+              <span id="analyzeBtnText" data-i18n="analyzeBtn">Анализировать</span>
+            </button>
+          </div>
+          <div id="uploadError" class="mt-4 hidden rounded-xl border border-err bg-errMuted p-3 text-sm text-err" role="alert"></div>
+        </section>
+
+        <!-- Секция 2: Результат — одна большая карточка, Summary и Key points крупнее -->
+        <section class="card card-accent rounded-2xl border border-border bg-panel p-6 sm:p-8 mb-8 animate-slide-up opacity-0 delay-2">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+            <div>
+              <h2 class="text-lg font-semibold text-text" data-i18n="resultTitle">Результат анализа</h2>
+              <p class="mt-0.5 text-sm text-muted" data-i18n="resultHint">Резюме и ключевые тезисы появятся после загрузки.</p>
+            </div>
+            <div id="metaBadge" class="hidden rounded-full border border-border bg-soft px-3 py-1.5 text-xs text-muted"></div>
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="rounded-xl border border-border bg-panel2 p-5 sm:p-6 transition hover:border-white/10" id="summaryCard">
+              <div class="text-xs font-semibold uppercase tracking-wider text-accent mb-3" data-i18n="summaryLabel">Summary</div>
+              <p id="summary" class="whitespace-pre-wrap text-base text-white/80 leading-relaxed min-h-[4rem]"><span id="summaryHint"></span><span class="typing-cursor" id="summaryCursor" aria-hidden="true">|</span></p>
+            </div>
+            <div class="rounded-xl border border-border bg-panel2 p-5 sm:p-6 transition hover:border-white/10" id="keyPointsCard">
+              <div class="text-xs font-semibold uppercase tracking-wider text-accent2 mb-3" data-i18n="keyPointsLabel">Key points</div>
+              <ul id="keyPoints" class="list-disc space-y-2 pl-5 text-base text-white/80 leading-relaxed"><li><span id="keyPointsHint"></span><span class="typing-cursor" id="keyPointsCursor" aria-hidden="true">|</span></li></ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Секция 3: Q&A — на всю ширину, вопрос слева (уже) / ответ справа (шире и выше) -->
+        <section class="card card-accent rounded-2xl border border-border bg-panel p-6 sm:p-8 animate-slide-up opacity-0 delay-3">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <h2 class="text-lg font-semibold text-text" data-i18n="questionTitle">Вопрос по документу</h2>
+              <p class="mt-0.5 text-sm text-muted" data-i18n="questionHint">Задай вопрос — AI ответит, опираясь на результат анализа.</p>
             </div>
             <div class="flex items-center gap-3">
-              <div
-                id="qaStatus"
-                class="hidden rounded-full border border-border bg-soft px-3 py-1 text-xs text-muted"
-              ></div>
+              <div id="qaStatus" class="hidden rounded-full border border-border bg-soft px-3 py-1.5 text-xs text-muted"></div>
               <button
                 id="askBtn"
-                class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/[0.07] disabled:cursor-not-allowed disabled:opacity-60"
+                class="inline-flex items-center gap-2 rounded-xl border border-border bg-panel2 px-5 py-2.5 text-sm font-semibold text-text transition hover:bg-soft hover:border-white/15 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled
               >
                 <span id="askBtnSpinner" class="hidden spinner"></span>
@@ -309,49 +235,31 @@
               </button>
             </div>
           </div>
-
-          <div class="mt-4 grid gap-4 lg:grid-cols-2">
-            <div class="rounded-2xl border border-border bg-panel2 p-4">
-              <label class="text-sm font-semibold" for="questionInput" data-i18n="yourQuestion">Твой вопрос</label>
+          <div class="grid gap-6 lg:grid-cols-[1fr,1.4fr]">
+            <div class="rounded-xl border border-border bg-panel2 p-4 sm:p-5">
+              <label class="text-xs font-semibold uppercase tracking-wider text-muted" for="questionInput" data-i18n="yourQuestion">Твой вопрос</label>
               <textarea
                 id="questionInput"
-                rows="4"
+                rows="6"
                 data-i18n-placeholder="questionPlaceholder"
                 placeholder="Например: Какие основные риски и рекомендации описаны в документе?"
-                class="mt-2 w-full resize-none rounded-xl border border-white/10 bg-white/[0.03] p-3 text-sm text-white/90 placeholder:text-white/40 outline-none ring-0 focus:border-white/20"
+                class="input-focus mt-3 w-full resize-y min-h-[240px] rounded-xl border border-border bg-panel/80 p-4 text-sm text-text placeholder:text-white/60 outline-none transition"
               ></textarea>
-              <div class="mt-2 text-xs text-muted" data-i18n="questionTip">
-                Совет: задавай конкретные вопросы, ссылайся на разделы/термины.
-              </div>
+              <p class="mt-2 text-xs text-muted" data-i18n="questionTip">Совет: задавай конкретные вопросы, ссылайся на разделы/термины.</p>
             </div>
-
-            <div class="rounded-2xl border border-border bg-panel2 p-4">
-              <div class="flex items-center justify-between gap-3">
-                <div class="text-sm font-semibold" data-i18n="answerLabel">Ответ</div>
-                <div
-                  id="answerBadge"
-                  class="hidden rounded-full border border-border bg-soft px-3 py-1 text-xs text-muted"
-                ></div>
+            <div class="rounded-xl border border-border bg-panel2 p-4 sm:p-5">
+              <div class="flex items-center justify-between gap-3 mb-3">
+                <span class="text-xs font-semibold uppercase tracking-wider text-muted" data-i18n="answerLabel">Ответ</span>
+                <div id="answerBadge" class="hidden rounded-full border border-accent/40 bg-accentMuted px-3 py-1 text-xs text-accent"></div>
               </div>
-              <div
-                id="answer"
-                class="mt-2 min-h-[110px] whitespace-pre-wrap rounded-xl border border-white/10 bg-white/[0.03] p-3 text-sm text-muted"
-              >
-                —
-              </div>
-              <div
-                id="qaError"
-                class="mt-3 hidden rounded-xl border border-white/10 bg-white/[0.03] p-3 text-sm text-err"
-                role="alert"
-              ></div>
+              <div id="answer" class="min-h-[240px] whitespace-pre-wrap rounded-xl border border-border bg-panel/80 p-4 text-base text-text/90 leading-relaxed"><span id="answerHint"></span><span class="typing-cursor" id="answerCursor" aria-hidden="true">|</span></div>
+              <div id="qaError" class="mt-3 hidden rounded-xl border border-err bg-errMuted p-3 text-sm text-err" role="alert"></div>
             </div>
           </div>
         </section>
 
-        <footer class="mt-10 text-center text-xs text-white/45">
-          <div data-i18n="footerTip">
-            Tip: если PDF — скан, сначала сделай OCR (иначе текста может не быть).
-          </div>
+        <footer class="mt-10 animate-fade-in opacity-0 delay-4 text-center">
+          <p class="text-xs text-white/80 rounded-lg bg-panel2 border border-border py-2.5 px-4 inline-block" data-i18n="footerTip">Tip: если PDF — скан, сначала сделай OCR (иначе текста может не быть).</p>
         </footer>
       </main>
     </div>
@@ -362,7 +270,7 @@
         ru: {
           subtitle: "Загрузи документ — получи краткое резюме, ключевые тезисы и задай вопрос по содержанию.",
           uploadTitle: "Загрузка документа",
-          uploadFormats: "Поддерживаемые форматы: PDF, DOCX, TXT.",
+          uploadFormats: "Поддерживаемые форматы: PDF, DOCX, PPTX, TXT.",
           dropHint: "Перетащи файл сюда или нажми для выбора",
           dropTip: "Лучше всего работает с текстовыми PDF (не сканы).",
           selectedFile: "Выбранный файл",
@@ -370,7 +278,10 @@
           resultTitle: "Результат анализа",
           resultHint: "Резюме и ключевые тезисы появятся после загрузки.",
           summaryLabel: "Summary",
+          summaryHint: "Здесь появится краткое резюме документа после анализа.",
           keyPointsLabel: "Key points",
+          keyPointsHint: "Здесь появятся ключевые тезисы и основные выводы.",
+          answerHint: "Здесь появится ответ AI на ваш вопрос по документу.",
           questionTitle: "Вопрос по документу",
           questionHint: "Задай вопрос — AI ответит, опираясь на результат анализа.",
           askBtn: "Спросить",
@@ -394,7 +305,7 @@
         en: {
           subtitle: "Upload a document — get a summary, key points, and ask questions about the content.",
           uploadTitle: "Document upload",
-          uploadFormats: "Supported formats: PDF, DOCX, TXT.",
+          uploadFormats: "Supported formats: PDF, DOCX, PPTX, TXT.",
           dropHint: "Drag a file here or click to choose",
           dropTip: "Works best with text-based PDFs (not scans).",
           selectedFile: "Selected file",
@@ -402,7 +313,10 @@
           resultTitle: "Analysis result",
           resultHint: "Summary and key points will appear after upload.",
           summaryLabel: "Summary",
+          summaryHint: "A short summary of the document will appear here after analysis.",
           keyPointsLabel: "Key points",
+          keyPointsHint: "Key takeaways and main points will appear here.",
+          answerHint: "The AI answer to your question will appear here.",
           questionTitle: "Question about the document",
           questionHint: "Ask a question — AI will answer based on the analysis.",
           askBtn: "Ask",
@@ -493,7 +407,10 @@
         target.textContent = message || "";
       }
 
-      function setAnalysisResult({ filename, summary, key_points, word_count }) {
+      function setAnalysisResult({ filename, summary, key_points, word_count, document_text }) {
+        // #region agent log
+        fetch("http://127.0.0.1:7766/ingest/7063cd79-e547-43ae-8354-4b55e09ec649",{method:"POST",headers:{"Content-Type":"application/json","X-Debug-Session-Id":"90bd0b"},body:JSON.stringify({sessionId:"90bd0b",location:"index.html:setAnalysisResult",message:"replacing summary and keyPoints",data:{summaryLen:(summary||"").length,keyPointsCount:(key_points||[]).length,summaryHadHint:!!document.getElementById("summaryHint")},timestamp:Date.now(),hypothesisId:"H2"})}).catch(()=>{});
+        // #endregion
         metaBadge.classList.remove("hidden");
         metaBadge.textContent = `${filename} · ${word_count} ${t("words")}`;
 
@@ -513,15 +430,24 @@
           });
         }
 
-        // Для /question отправляем контекст анализа (summary + key points)
-        analysisContextText =
-          `SUMMARY:\n${summary || ""}\n\nKEY POINTS:\n` +
-          pts.map((p) => `- ${p}`).join("\n");
-
+        analysisContextText = document_text || "";
         askBtn.disabled = !analysisContextText.trim();
+
+        var summaryCard = document.getElementById("summaryCard");
+        var keyPointsCard = document.getElementById("keyPointsCard");
+        if (summaryCard && keyPointsCard) {
+          summaryCard.classList.remove("animate-card-in");
+          keyPointsCard.classList.remove("animate-card-in");
+          summaryCard.offsetHeight;
+          summaryCard.classList.add("animate-card-in");
+          keyPointsCard.classList.add("animate-card-in");
+        }
       }
 
       function pickFile(file) {
+        // #region agent log
+        fetch("http://127.0.0.1:7766/ingest/7063cd79-e547-43ae-8354-4b55e09ec649",{method:"POST",headers:{"Content-Type":"application/json","X-Debug-Session-Id":"90bd0b"},body:JSON.stringify({sessionId:"90bd0b",location:"index.html:pickFile",message:"file selected",data:{hasFile:!!file,summaryHintExists:!!document.getElementById("summaryHint")},timestamp:Date.now(),hypothesisId:"H3"})}).catch(()=>{});
+        // #endregion
         selectedFile = file || null;
         fileNameEl.textContent = selectedFile ? selectedFile.name : "—";
         analyzeBtn.disabled = !selectedFile;
@@ -530,7 +456,7 @@
 
       function onDrop(e) {
         e.preventDefault();
-        dropZone.classList.remove("ring-2", "ring-accent");
+        dropZone.classList.remove("ring-2", "ring-accent", "drop-zone-active");
         const file = e.dataTransfer?.files?.[0];
         if (file) pickFile(file);
       }
@@ -542,10 +468,10 @@
       fileInput.addEventListener("change", (e) => pickFile(e.target.files?.[0]));
       dropZone.addEventListener("dragover", (e) => {
         e.preventDefault();
-        dropZone.classList.add("ring-2", "ring-accent");
+        dropZone.classList.add("ring-2", "ring-accent", "drop-zone-active");
       });
       dropZone.addEventListener("dragleave", () => {
-        dropZone.classList.remove("ring-2", "ring-accent");
+        dropZone.classList.remove("ring-2", "ring-accent", "drop-zone-active");
       });
       dropZone.addEventListener("drop", onDrop);
 
@@ -554,6 +480,9 @@
 
         setError(uploadError, "");
         setError(qaError, "");
+        // #region agent log
+        fetch("http://127.0.0.1:7766/ingest/7063cd79-e547-43ae-8354-4b55e09ec649",{method:"POST",headers:{"Content-Type":"application/json","X-Debug-Session-Id":"90bd0b"},body:JSON.stringify({sessionId:"90bd0b",location:"index.html:analyzeClick",message:"before clear answer",data:{answerHasHint:!!document.getElementById("answerHint")},timestamp:Date.now(),hypothesisId:"H1"})}).catch(()=>{});
+        // #endregion
         answerEl.textContent = "—";
         answerBadge.classList.add("hidden");
 
@@ -577,6 +506,13 @@
         } catch (err) {
           setBusy("upload", false, "");
           setError(uploadError, err?.message || String(err));
+        }
+      });
+
+      questionInput.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          if (!askBtn.disabled) askBtn.click();
         }
       });
 
@@ -630,6 +566,7 @@
         if (answerBadge.classList.contains("hidden") === false) {
           answerBadge.textContent = t("answerBadge");
         }
+        setTimeout(runHintTyping, 100);
       });
       document.getElementById("langEn").addEventListener("click", () => {
         currentLang = "en";
@@ -642,9 +579,44 @@
         if (answerBadge.classList.contains("hidden") === false) {
           answerBadge.textContent = t("answerBadge");
         }
+        setTimeout(runHintTyping, 100);
       });
 
       applyLang();
+
+      function typeWriter(container, cursorEl, text, speedMs) {
+        if (!container || !text) return;
+        container.textContent = "";
+        if (cursorEl) cursorEl.classList.remove("hidden");
+        let i = 0;
+        const interval = setInterval(function () {
+          if (i < text.length) {
+            container.textContent += text[i];
+            i++;
+          } else {
+            clearInterval(interval);
+            if (cursorEl) cursorEl.classList.add("hidden");
+          }
+        }, speedMs);
+      }
+
+      function runHintTyping() {
+        var summaryHint = document.getElementById("summaryHint");
+        var summaryCursor = document.getElementById("summaryCursor");
+        var keyPointsHint = document.getElementById("keyPointsHint");
+        var keyPointsCursor = document.getElementById("keyPointsCursor");
+        var answerHint = document.getElementById("answerHint");
+        var answerCursor = document.getElementById("answerCursor");
+        if (summaryHint) typeWriter(summaryHint, summaryCursor, t("summaryHint"), 42);
+        setTimeout(function () {
+          if (keyPointsHint) typeWriter(keyPointsHint, keyPointsCursor, t("keyPointsHint"), 42);
+        }, 400);
+        setTimeout(function () {
+          if (answerHint) typeWriter(answerHint, answerCursor, t("answerHint"), 42);
+        }, 850);
+      }
+
+      setTimeout(runHintTyping, 600);
     </script>
   </body>
 </html>

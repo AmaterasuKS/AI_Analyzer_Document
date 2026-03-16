@@ -6,6 +6,7 @@ class DocumentResponse(BaseModel):
     summary: str
     key_points: list[str]
     word_count: int
+    document_text: str  # полный извлечённый текст (для вопросов по документу, включая таблицы)
 
 
 class QuestionRequest(BaseModel):

@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse
 
 from core.ai_analyzer import analyze_document, answer_question, GroqNotConfiguredError
-from core.file_reader import get_word_count, read_docx, read_pdf, read_txt
+from core.file_reader import get_word_count, read_docx, read_pdf, read_pptx, read_txt
 from core.models import DocumentResponse, QuestionRequest, QuestionResponse
 
 
@@ -25,11 +25,11 @@ BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
 
 
-def _detect_extension(filename: str | None) -> Literal["pdf", "docx", "txt"] | None:
+def _detect_extension(filename: str | None) -> Literal["pdf", "docx", "pptx", "txt"] | None:
     if not filename:
         return None
     ext = filename.lower().rsplit(".", 1)[-1]
-    if ext in {"pdf", "docx", "txt"}:
+    if ext in {"pdf", "docx", "pptx", "txt"}:
         return ext  # type: ignore[return-value]
     return None
 
@@ -40,7 +40,7 @@ async def upload_document(file: UploadFile = File(...)) -> DocumentResponse:
     if ext is None:
         raise HTTPException(
             status_code=400,
-            detail="Поддерживаются только файлы PDF, DOCX и TXT.",
+            detail="Поддерживаются только файлы PDF, DOCX, PPTX и TXT.",
         )
 
     try:
@@ -48,6 +48,8 @@ async def upload_document(file: UploadFile = File(...)) -> DocumentResponse:
             text = read_pdf(file.file)
         elif ext == "docx":
             text = read_docx(file.file)
+        elif ext == "pptx":
+            text = read_pptx(file.file)
         else:
             text = read_txt(file.file)
     except Exception as e:
@@ -79,6 +81,7 @@ async def upload_document(file: UploadFile = File(...)) -> DocumentResponse:
         summary=summary,
         key_points=key_points,
         word_count=word_count,
+        document_text=text,
     )
 
 
