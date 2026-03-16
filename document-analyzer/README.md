@@ -1,3 +1,7 @@
+![Python](https://img.shields.io/badge/Python-3.10+-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-green)
+![Groq](https://img.shields.io/badge/Groq-AI-orange)
+
 # AI Document Analyzer
 
 A web-based document analysis tool (PDF/DOCX/TXT): automatically generates a summary, highlights key points, and answers questions about the content.
@@ -6,7 +10,7 @@ A web-based document analysis tool (PDF/DOCX/TXT): automatically generates a sum
 
 - **Python 3.10+**
 - **FastAPI** (API backend)
-- **Groq API** (model: `llama-3.3-70b-versatile`)
+- **Grok API** (model: `llama-3.3-70b-versatile`)
 - **PyMuPDF** (text extraction from PDF)
 - **python-docx** (text extraction from DOCX)
 - **HTML + Tailwind CSS** (frontend, single file `static/index.html`)
