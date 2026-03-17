@@ -32,7 +32,8 @@ A web-based document analysis tool (PDF/DOCX/TXT): automatically generates a sum
 
 ## Screenshot:
 
-<img width="1280" height="907" alt="image" src="https://github.com/user-attachments/assets/fae27a53-fa17-4473-9b74-41a3cb7a934a" />
+<img width="1900" height="972" alt="image" src="https://github.com/user-attachments/assets/3dc8fcb2-3330-4623-9942-3aec03fed862" />
+
 
 
 ## Installing:
